@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Pocket Virtual Pet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +20,7 @@
     * {
       box-sizing: border-box;
       user-select: none;
+      -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -31,11 +32,13 @@
       align-items: center;
       background: radial-gradient(circle, #fcefee 0%, #dbe7e4 100%);
       font-family: 'VT323', monospace;
+      padding: 10px;
     }
 
     .tamagotchi-shell {
-      width: 360px;
-      height: 500px;
+      width: 100%;
+      max-width: 350px;
+      height: 490px;
       background: var(--shell-color);
       border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
       border: 8px solid var(--shell-border);
@@ -43,7 +46,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 20px;
+      padding: 20px 16px;
       position: relative;
     }
 
@@ -53,14 +56,13 @@
       justify-content: space-between;
       align-items: center;
       padding: 0 10px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .brand-title {
       font-size: 20px;
       color: #9c4d5d;
       letter-spacing: 2px;
-      text-transform: uppercase;
       font-weight: bold;
     }
 
@@ -69,6 +71,7 @@
       color: #b05c6d;
       cursor: pointer;
       text-decoration: underline;
+      padding: 4px;
     }
 
     .screen-bezel {
@@ -116,8 +119,8 @@
     .character {
       font-size: 52px;
       line-height: 1;
-      transition: transform 0.1s ease;
       animation: bounce 1.2s infinite ease-in-out;
+      pointer-events: none;
     }
 
     @keyframes bounce {
@@ -131,8 +134,8 @@
 
     @keyframes wobbleAnim {
       0% { transform: scale(1) rotate(0deg); }
-      25% { transform: scale(1.15) rotate(-15deg); }
-      75% { transform: scale(1.15) rotate(15deg); }
+      25% { transform: scale(1.2) rotate(-15deg); }
+      75% { transform: scale(1.2) rotate(15deg); }
       100% { transform: scale(1) rotate(0deg); }
     }
 
@@ -141,22 +144,23 @@
       animation: none !important;
     }
 
-    /* 頂層高對比對話框 */
-    .speech-bubble {
+    /* 訊息提示框 */
+    .msg-bar {
       position: absolute;
-      top: 6px;
+      top: 28px;
+      left: 6px;
+      right: 6px;
       background: #ffffff;
       color: #1f3c1d;
       border: 2px solid #1f3c1d;
-      padding: 3px 8px;
-      font-size: 16px;
+      padding: 3px 6px;
+      font-size: 15px;
       font-weight: bold;
-      border-radius: 6px;
-      display: none;
-      z-index: 99;
-      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
-      pointer-events: none;
-      white-space: nowrap;
+      border-radius: 4px;
+      text-align: center;
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+      z-index: 50;
+      transition: opacity 0.2s ease;
     }
 
     .poop-zone {
@@ -165,6 +169,7 @@
       bottom: 4px;
       font-size: 18px;
       letter-spacing: -2px;
+      pointer-events: none;
     }
 
     .stat-bars {
@@ -184,21 +189,21 @@
     .lights-off-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(18, 30, 16, 0.9);
+      background: rgba(18, 30, 16, 0.92);
       color: #fff;
       display: none;
       align-items: center;
       justify-content: center;
       font-size: 24px;
-      z-index: 10;
+      z-index: 40;
     }
 
     .controls {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      margin-top: 24px;
-      padding: 0 6px;
+      margin-top: 20px;
+      padding: 0 4px;
     }
 
     .btn-group {
@@ -209,12 +214,12 @@
     }
 
     .game-btn {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       background: var(--btn-color);
       border: 2px solid var(--btn-shadow);
       border-radius: 50%;
-      box-shadow: 0 5px 0 var(--btn-shadow), 0 6px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 0 var(--btn-shadow), 0 5px 6px rgba(0, 0, 0, 0.2);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -225,12 +230,12 @@
     }
 
     .game-btn:active {
-      transform: translateY(4px);
+      transform: translateY(3px);
       box-shadow: 0 1px 0 var(--btn-shadow);
     }
 
     .btn-label {
-      font-size: 14px;
+      font-size: 13px;
       color: #7b3e4b;
       font-weight: bold;
     }
@@ -240,12 +245,12 @@
 
   <div class="tamagotchi-shell">
     <div class="brand-header">
-      <span class="brand-title">✧ Petit Friend ✧</span>
+      <span class="brand-title">✧ PETIT FRIEND ✧</span>
       <span class="reset-link" id="btnReset">重置</span>
     </div>
 
     <div class="screen-bezel">
-      <div class="lcd-screen" id="lcdScreen">
+      <div class="lcd-screen">
         <div class="lights-off-overlay" id="sleepOverlay">zzz...</div>
 
         <div class="top-status">
@@ -254,7 +259,7 @@
         </div>
 
         <div class="viewport" id="viewport">
-          <div class="speech-bubble" id="speechBubble">蛋還沒孵化！</div>
+          <div class="msg-bar" id="msgBar">點擊蛋可以加速孵化！</div>
           <div class="character" id="petChar">🥚</div>
           <div class="poop-zone" id="poopZone"></div>
         </div>
@@ -270,113 +275,268 @@
 
     <div class="controls">
       <div class="btn-group">
-        <button class="game-btn" data-action="feed">🍚</button>
+        <button class="game-btn" data-act="feed">🍚</button>
         <span class="btn-label">餵食</span>
       </div>
       <div class="btn-group">
-        <button class="game-btn" data-action="play">🎮</button>
+        <button class="game-btn" data-act="play">🎮</button>
         <span class="btn-label">玩耍</span>
       </div>
       <div class="btn-group">
-        <button class="game-btn" data-action="clean">✨</button>
+        <button class="game-btn" data-act="clean">✨</button>
         <span class="btn-label">打掃</span>
       </div>
       <div class="btn-group">
-        <button class="game-btn" data-action="sleep">💡</button>
+        <button class="game-btn" data-act="sleep">💡</button>
         <span class="btn-label">燈光</span>
       </div>
       <div class="btn-group">
-        <button class="game-btn" data-action="heal">💊</button>
+        <button class="game-btn" data-act="heal">💊</button>
         <span class="btn-label">看病</span>
       </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      class VirtualPet {
-        constructor() {
-          this.saveKey = 'petit_pet_save_v2';
-          this.bubbleTimer = null;
-          this.loadState();
-          this.bindElements();
-          this.bindEvents();
-          this.startLoop();
-          this.updateView();
+    (function() {
+      const SAVE_KEY = 'petit_pet_save_v3';
+      let state = {
+        hunger: 100,
+        happy: 100,
+        energy: 100,
+        health: 100,
+        poopCount: 0,
+        ageSeconds: 0,
+        isSleeping: false,
+        isDead: false,
+        stage: 0, // 0:蛋, 1:幼體, 2:成長期, 3:完全體
+        lastTime: Date.now()
+      };
+
+      // 載入存檔
+      const saved = localStorage.getItem(SAVE_KEY);
+      if (saved) {
+        try {
+          state = Object.assign(state, JSON.parse(saved));
+        } catch(e) {}
+      }
+
+      const els = {
+        petChar: document.getElementById('petChar'),
+        msgBar: document.getElementById('msgBar'),
+        poopZone: document.getElementById('poopZone'),
+        stageLabel: document.getElementById('stageLabel'),
+        ageLabel: document.getElementById('ageLabel'),
+        valHunger: document.getElementById('valHunger'),
+        valHappy: document.getElementById('valHappy'),
+        valEnergy: document.getElementById('valEnergy'),
+        valHealth: document.getElementById('valHealth'),
+        sleepOverlay: document.getElementById('sleepOverlay'),
+        viewport: document.getElementById('viewport'),
+        btnReset: document.getElementById('btnReset')
+      };
+
+      let msgTimer = null;
+      function showMsg(text) {
+        els.msgBar.innerText = text;
+        els.msgBar.style.opacity = '1';
+        clearTimeout(msgTimer);
+        msgTimer = setTimeout(() => {
+          els.msgBar.style.opacity = '0';
+        }, 2200);
+      }
+
+      function wobble() {
+        els.petChar.classList.remove('wobble');
+        void els.petChar.offsetWidth;
+        els.petChar.classList.add('wobble');
+      }
+
+      function render() {
+        if (state.isDead) {
+          els.petChar.innerText = '🪦';
+          els.stageLabel.innerText = 'STAGE: 天使';
+        } else {
+          switch(state.stage) {
+            case 0: els.petChar.innerText = '🥚'; els.stageLabel.innerText = 'STAGE: 蛋'; break;
+            case 1: els.petChar.innerText = '🐣'; els.stageLabel.innerText = 'STAGE: 幼體'; break;
+            case 2: els.petChar.innerText = state.health < 40 ? '🤕' : '🐥'; els.stageLabel.innerText = 'STAGE: 成長期'; break;
+            case 3: els.petChar.innerText = state.health < 40 ? '🧟' : '🦖'; els.stageLabel.innerText = 'STAGE: 完全體'; break;
+          }
         }
 
-        getDefaultState() {
-          return {
-            hunger: 100,
-            happy: 100,
-            energy: 100,
-            health: 100,
-            poopCount: 0,
-            ageSeconds: 0,
-            isSleeping: false,
-            isDead: false,
-            stage: 0,
-            lastTickTime: Date.now()
-          };
+        if (state.isSleeping) {
+          els.petChar.classList.add('sleeping');
+        } else {
+          els.petChar.classList.remove('sleeping');
         }
 
-        loadState() {
-          const saved = localStorage.getItem(this.saveKey);
-          if (saved) {
-            try {
-              this.state = JSON.parse(saved);
-              this.catchUpOfflineTime();
-            } catch (e) {
-              this.state = this.getDefaultState();
-            }
+        els.ageLabel.innerText = `AGE: ${Math.floor(state.ageSeconds / 60)}歲`;
+        els.valHunger.innerText = `${Math.round(state.hunger)}%`;
+        els.valHappy.innerText = `${Math.round(state.happy)}%`;
+        els.valEnergy.innerText = `${Math.round(state.energy)}%`;
+        els.valHealth.innerText = `${Math.round(state.health)}%`;
+        els.poopZone.innerText = '💩'.repeat(state.poopCount);
+        els.sleepOverlay.style.display = state.isSleeping ? 'flex' : 'none';
+
+        state.lastTime = Date.now();
+        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      }
+
+      function tick() {
+        if (state.isDead) return;
+        state.ageSeconds += 1;
+
+        // 進化判斷
+        if (state.stage === 0 && state.ageSeconds >= 10) {
+          state.stage = 1;
+          wobble();
+          showMsg('🐣 蛋孵化出來了！');
+        } else if (state.stage === 1 && state.ageSeconds >= 60) {
+          state.stage = 2;
+          wobble();
+          showMsg('🐥 寵物進化了！');
+        } else if (state.stage === 2 && state.ageSeconds >= 180) {
+          state.stage = 3;
+          wobble();
+          showMsg('🦖 變成完全體！');
+        }
+
+        if (state.stage > 0 && state.ageSeconds % 3 === 0) {
+          if (state.isSleeping) {
+            state.energy = Math.min(100, state.energy + 3);
+            state.hunger = Math.max(0, state.hunger - 0.5);
           } else {
-            this.state = this.getDefaultState();
+            state.hunger = Math.max(0, state.hunger - 1);
+            state.happy = Math.max(0, state.happy - 1);
+            state.energy = Math.max(0, state.energy - 0.5);
+          }
+
+          if (!state.isSleeping && Math.random() < 0.15 && state.poopCount < 4) {
+            state.poopCount += 1;
+            showMsg('💩 該打掃了！');
+          }
+
+          if (state.poopCount > 0) state.health = Math.max(0, state.health - state.poopCount);
+          if (state.hunger === 0 || state.energy === 0) state.health = Math.max(0, state.health - 2);
+
+          if (state.health <= 0) {
+            state.isDead = true;
+            state.isSleeping = false;
+            showMsg('🪦 寵物離世了...');
           }
         }
+        render();
+      }
 
-        saveState() {
-          this.state.lastTickTime = Date.now();
-          localStorage.setItem(this.saveKey, JSON.stringify(this.state));
+      function handleAction(action) {
+        wobble();
+        if (state.isDead) {
+          showMsg('請點右上角重置重新開始');
+          return;
         }
 
-        catchUpOfflineTime() {
-          const now = Date.now();
-          const elapsedSecs = Math.floor((now - this.state.lastTickTime) / 1000);
-          if (elapsedSecs > 0) {
-            const ticks = Math.min(Math.floor(elapsedSecs / 3), 1000);
-            for (let i = 0; i < ticks; i++) {
-              this.tick();
+        if (state.stage === 0) {
+          showMsg('蛋還沒孵化喔！(點蛋加速)');
+          return;
+        }
+
+        if (state.isSleeping && action !== 'sleep') {
+          showMsg('正在睡覺中 zzZ');
+          return;
+        }
+
+        switch(action) {
+          case 'feed':
+            if (state.hunger >= 100) {
+              showMsg('已經吃很飽了~');
+            } else {
+              state.hunger = Math.min(100, state.hunger + 25);
+              state.health = Math.min(100, state.health + 2);
+              showMsg('好吃！(๑´ڡ`๑)');
             }
-          }
-          this.state.lastTickTime = now;
-        }
+            break;
 
-        bindElements() {
-          this.ui = {
-            petChar: document.getElementById('petChar'),
-            speechBubble: document.getElementById('speechBubble'),
-            poopZone: document.getElementById('poopZone'),
-            stageLabel: document.getElementById('stageLabel'),
-            ageLabel: document.getElementById('ageLabel'),
-            valHunger: document.getElementById('valHunger'),
-            valHappy: document.getElementById('valHappy'),
-            valEnergy: document.getElementById('valEnergy'),
-            valHealth: document.getElementById('valHealth'),
-            sleepOverlay: document.getElementById('sleepOverlay'),
-            viewport: document.getElementById('viewport'),
-            btnReset: document.getElementById('btnReset')
+          case 'play':
+            if (state.energy < 15) {
+              showMsg('太累了，動不了...');
+            } else {
+              state.happy = Math.min(100, state.happy + 20);
+              state.energy = Math.max(0, state.energy - 10);
+              state.hunger = Math.max(0, state.hunger - 5);
+              showMsg('好玩！(≧▽≦)');
+            }
+            break;
+
+          case 'clean':
+            if (state.poopCount === 0) {
+              showMsg('環境很乾淨喔！✨');
+            } else {
+              state.poopCount = 0;
+              state.happy = Math.min(100, state.happy + 10);
+              showMsg('乾淨溜溜！🧹');
+            }
+            break;
+
+          case 'sleep':
+            state.isSleeping = !state.isSleeping;
+            showMsg(state.isSleeping ? '晚安...' : '早安！☀️');
+            break;
+
+          case 'heal':
+            if (state.health >= 90) {
+              showMsg('身體非常健康！');
+            } else {
+              state.health = Math.min(100, state.health + 35);
+              showMsg('打針康復了！💊');
+            }
+            break;
+        }
+        render();
+      }
+
+      // 點擊螢幕/蛋加速
+      els.viewport.addEventListener('click', () => {
+        wobble();
+        if (state.stage === 0) {
+          state.ageSeconds += 2;
+          const left = Math.max(0, 10 - state.ageSeconds);
+          showMsg(left > 0 ? `蛋在晃動！(剩${left}秒)` : '要破殼了！');
+          render();
+        } else if (!state.isSleeping) {
+          state.happy = Math.min(100, state.happy + 2);
+          showMsg('❤ 摸摸~');
+          render();
+        }
+      });
+
+      // 按鈕綁定
+      document.querySelectorAll('.game-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const act = btn.getAttribute('data-act');
+          handleAction(act);
+        });
+      });
+
+      // 重置
+      els.btnReset.addEventListener('click', () => {
+        if (confirm('要重新開始養新的一顆蛋嗎？')) {
+          localStorage.removeItem(SAVE_KEY);
+          state = {
+            hunger: 100, happy: 100, energy: 100, health: 100,
+            poopCount: 0, ageSeconds: 0, isSleeping: false, isDead: false,
+            stage: 0, lastTime: Date.now()
           };
+          showMsg('✨ 新生命開始！');
+          render();
         }
+      });
 
-        bindEvents() {
-          // 實體按鈕點擊監聽
-          document.querySelectorAll('.game-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const action = btn.getAttribute('data-action');
-              this.handleAction(action);
-            });
-          });
+      render();
+      setInterval(tick, 1000);
+    })();
+  </script>
+</body>
+</html>
 
-          // 點擊螢幕/角色
-          this.ui.viewport.
-  
