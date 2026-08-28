@@ -22,23 +22,24 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       background: radial-gradient(circle, #fcefee 0%, #dbe7e4 100%);
       font-family: 'VT323', monospace;
-      padding: 10px;
+      padding: 12px;
     }
 
     .tamagotchi-shell {
       width: 100%;
       max-width: 350px;
-      height: 490px;
+      height: 510px;
       background: var(--shell-color);
       border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
       border: 8px solid var(--shell-border);
@@ -46,7 +47,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 16px;
+      padding: 24px 16px;
       position: relative;
     }
 
@@ -55,8 +56,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 10px;
-      margin-bottom: 6px;
+      padding: 0 12px;
+      margin-bottom: 8px;
     }
 
     .brand-title {
@@ -67,16 +68,16 @@
     }
 
     .reset-link {
-      font-size: 14px;
+      font-size: 15px;
       color: #b05c6d;
       cursor: pointer;
       text-decoration: underline;
-      padding: 4px;
+      padding: 2px 4px;
     }
 
     .screen-bezel {
       width: 250px;
-      height: 230px;
+      height: 245px;
       background: #7a8a64;
       border-radius: 12px;
       padding: 10px;
@@ -92,20 +93,39 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 6px;
+      padding: 6px 8px;
       color: var(--screen-pixel);
       overflow: hidden;
     }
 
+    /* 頂部文字水平對齊 */
     .top-status {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 16px;
+      height: 20px;
+      line-height: 20px;
       border-bottom: 1px dashed var(--screen-pixel);
-      padding-bottom: 2px;
+      width: 100%;
     }
 
+    /* 緊貼頂部的單行提示，無任何白底色塊，完全不遮擋中心 */
+    .msg-bar {
+      height: 18px;
+      line-height: 18px;
+      font-size: 14px;
+      text-align: center;
+      color: var(--screen-pixel);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      margin-top: 2px;
+    }
+
+    /* 主角色可視區 */
     .viewport {
       flex: 1;
       position: relative;
@@ -114,10 +134,11 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      width: 100%;
     }
 
     .character {
-      font-size: 52px;
+      font-size: 56px;
       line-height: 1;
       animation: bounce 1.2s infinite ease-in-out;
       pointer-events: none;
@@ -144,46 +165,31 @@
       animation: none !important;
     }
 
-    /* 訊息提示框 */
-    .msg-bar {
-      position: absolute;
-      top: 28px;
-      left: 6px;
-      right: 6px;
-      background: #ffffff;
-      color: #1f3c1d;
-      border: 2px solid #1f3c1d;
-      padding: 3px 6px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 4px;
-      text-align: center;
-      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
-      z-index: 50;
-      transition: opacity 0.2s ease;
-    }
-
     .poop-zone {
       position: absolute;
-      right: 6px;
-      bottom: 4px;
-      font-size: 18px;
+      right: 2px;
+      bottom: 2px;
+      font-size: 16px;
       letter-spacing: -2px;
       pointer-events: none;
     }
 
+    /* 底部數據 */
     .stat-bars {
       font-size: 14px;
+      line-height: 1.2;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2px 8px;
+      gap: 2px 12px;
       border-top: 1px dashed var(--screen-pixel);
-      padding-top: 3px;
+      padding-top: 4px;
+      width: 100%;
     }
 
     .stat-item {
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
 
     .lights-off-overlay {
@@ -198,6 +204,7 @@
       z-index: 40;
     }
 
+    /* 按鈕操作區 */
     .controls {
       display: flex;
       justify-content: space-between;
@@ -253,22 +260,27 @@
       <div class="lcd-screen">
         <div class="lights-off-overlay" id="sleepOverlay">zzz...</div>
 
+        <!-- 頂部資訊 -->
         <div class="top-status">
           <span id="stageLabel">STAGE: 蛋</span>
           <span id="ageLabel">AGE: 0歲</span>
         </div>
 
+        <!-- 緊貼頂部的跑馬提示，不擋角色 -->
+        <div class="msg-bar" id="msgBar">點擊蛋可以加速孵化！</div>
+
+        <!-- 中央主畫面 -->
         <div class="viewport" id="viewport">
-          <div class="msg-bar" id="msgBar">點擊蛋可以加速孵化！</div>
           <div class="character" id="petChar">🥚</div>
           <div class="poop-zone" id="poopZone"></div>
         </div>
 
+        <!-- 底部數值 -->
         <div class="stat-bars">
-          <div class="stat-item">飽足: <span id="valHunger">100%</span></div>
-          <div class="stat-item">心情: <span id="valHappy">100%</span></div>
-          <div class="stat-item">精力: <span id="valEnergy">100%</span></div>
-          <div class="stat-item">健康: <span id="valHealth">100%</span></div>
+          <div class="stat-item"><span>飽足:</span><span id="valHunger">100%</span></div>
+          <div class="stat-item"><span>心情:</span><span id="valHappy">100%</span></div>
+          <div class="stat-item"><span>精力:</span><span id="valEnergy">100%</span></div>
+          <div class="stat-item"><span>健康:</span><span id="valHealth">100%</span></div>
         </div>
       </div>
     </div>
@@ -299,7 +311,7 @@
 
   <script>
     (function() {
-      const SAVE_KEY = 'petit_pet_save_v3';
+      const SAVE_KEY = 'petit_pet_save_v5';
       let state = {
         hunger: 100,
         happy: 100,
@@ -309,11 +321,10 @@
         ageSeconds: 0,
         isSleeping: false,
         isDead: false,
-        stage: 0, // 0:蛋, 1:幼體, 2:成長期, 3:完全體
+        stage: 0,
         lastTime: Date.now()
       };
 
-      // 載入存檔
       const saved = localStorage.getItem(SAVE_KEY);
       if (saved) {
         try {
@@ -343,7 +354,7 @@
         clearTimeout(msgTimer);
         msgTimer = setTimeout(() => {
           els.msgBar.style.opacity = '0';
-        }, 2200);
+        }, 2000);
       }
 
       function wobble() {
@@ -387,7 +398,6 @@
         if (state.isDead) return;
         state.ageSeconds += 1;
 
-        // 進化判斷
         if (state.stage === 0 && state.ageSeconds >= 10) {
           state.stage = 1;
           wobble();
@@ -495,7 +505,6 @@
         render();
       }
 
-      // 點擊螢幕/蛋加速
       els.viewport.addEventListener('click', () => {
         wobble();
         if (state.stage === 0) {
@@ -510,7 +519,6 @@
         }
       });
 
-      // 按鈕綁定
       document.querySelectorAll('.game-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -519,7 +527,6 @@
         });
       });
 
-      // 重置
       els.btnReset.addEventListener('click', () => {
         if (confirm('要重新開始養新的一顆蛋嗎？')) {
           localStorage.removeItem(SAVE_KEY);
@@ -533,6 +540,7 @@
         }
       });
 
+      showMsg('點擊蛋可以加速孵化！');
       render();
       setInterval(tick, 1000);
     })();
@@ -540,3 +548,4 @@
 </body>
 </html>
 
+              
