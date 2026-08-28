@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pocket Virtual Pet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --shell-color: #ffb7c5;
+      --shell-border: #f28b9f;
+      --screen-bg: #cadc9f;
+      --screen-pixel: #1f3c1d;
+      --btn-color: #ffeef2;
+      --btn-shadow: #d88395;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle, #fcefee 0%, #dbe7e4 100%);
+      font-family: 'VT323', monospace;
+    }
+
+    .tamagotchi-shell {
+      width: 360px;
+      height: 500px;
+      background: var(--shell-color);
+      border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+      border: 8px solid var(--shell-border);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.15), inset 0 -8px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 20px;
+      position: relative;
+    }
+
+    .brand-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      margin-bottom: 8px;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      color: #9c4d5d;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .reset-link {
+      font-size: 14px;
+      color: #b05c6d;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .screen-bezel {
+      width: 250px;
+      height: 230px;
+      background: #7a8a64;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .lcd-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--screen-bg);
+      border-radius: 6px;
+      border: 2px solid var(--screen-pixel);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px;
+      color: var(--screen-pixel);
+      overflow: hidden;
+    }
+
+    .top-status {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      border-bottom: 1px dashed var(--screen-pixel);
+      padding-bottom: 2px;
+    }
+
+    .viewport {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .character {
+      font-size: 52px;
+      line-height: 1;
+      transition: transform 0.1s ease;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .wobble {
+      animation: wobbleAnim 0.35s ease-in-out !important;
+    }
+
+    @keyframes wobbleAnim {
+      0% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.15) rotate(-15deg); }
+      75% { transform: scale(1.15) rotate(15deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .sleeping {
+      filter: grayscale(0.5);
+      animation: none !important;
+    }
+
+    /* 頂層高對比對話框 */
+    .speech-bubble {
+      position: absolute;
+      top: 6px;
+      background: #ffffff;
+      color: #1f3c1d;
+      border: 2px solid #1f3c1d;
+      padding: 3px 8px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      display: none;
+      z-index: 99;
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .poop-zone {
+      position: absolute;
+      right: 6px;
+      bottom: 4px;
+      font-size: 18px;
+      letter-spacing: -2px;
+    }
+
+    .stat-bars {
+      font-size: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 8px;
+      border-top: 1px dashed var(--screen-pixel);
+      padding-top: 3px;
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .lights-off-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(18, 30, 16, 0.9);
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      z-index: 10;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 24px;
+      padding: 0 6px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .game-btn {
+      width: 50px;
+      height: 50px;
+      background: var(--btn-color);
+      border: 2px solid var(--btn-shadow);
+      border-radius: 50%;
+      box-shadow: 0 5px 0 var(--btn-shadow), 0 6px 6px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      outline: none;
+      touch-action: manipulation;
+    }
+
+    .game-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 var(--btn-shadow);
+    }
+
+    .btn-label {
+      font-size: 14px;
+      color: #7b3e4b;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tamagotchi-shell">
+    <div class="brand-header">
+      <span class="brand-title">✧ Petit Friend ✧</span>
+      <span class="reset-link" id="btnReset">重置</span>
+    </div>
+
+    <div class="screen-bezel">
+      <div class="lcd-screen" id="lcdScreen">
+        <div class="lights-off-overlay" id="sleepOverlay">zzz...</div>
+
+        <div class="top-status">
+          <span id="stageLabel">STAGE: 蛋</span>
+          <span id="ageLabel">AGE: 0歲</span>
+        </div>
+
+        <div class="viewport" id="viewport">
+          <div class="speech-bubble" id="speechBubble">蛋還沒孵化！</div>
+          <div class="character" id="petChar">🥚</div>
+          <div class="poop-zone" id="poopZone"></div>
+        </div>
+
+        <div class="stat-bars">
+          <div class="stat-item">飽足: <span id="valHunger">100%</span></div>
+          <div class="stat-item">心情: <span id="valHappy">100%</span></div>
+          <div class="stat-item">精力: <span id="valEnergy">100%</span></div>
+          <div class="stat-item">健康: <span id="valHealth">100%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="btn-group">
+        <button class="game-btn" data-action="feed">🍚</button>
+        <span class="btn-label">餵食</span>
+      </div>
+      <div class="btn-group">
+        <button class="game-btn" data-action="play">🎮</button>
+        <span class="btn-label">玩耍</span>
+      </div>
+      <div class="btn-group">
+        <button class="game-btn" data-action="clean">✨</button>
+        <span class="btn-label">打掃</span>
+      </div>
+      <div class="btn-group">
+        <button class="game-btn" data-action="sleep">💡</button>
+        <span class="btn-label">燈光</span>
+      </div>
+      <div class="btn-group">
+        <button class="game-btn" data-action="heal">💊</button>
+        <span class="btn-label">看病</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      class VirtualPet {
+        constructor() {
+          this.saveKey = 'petit_pet_save_v2';
+          this.bubbleTimer = null;
+          this.loadState();
+          this.bindElements();
+          this.bindEvents();
+          this.startLoop();
+          this.updateView();
+        }
+
+        getDefaultState() {
+          return {
+            hunger: 100,
+            happy: 100,
+            energy: 100,
+            health: 100,
+            poopCount: 0,
+            ageSeconds: 0,
+            isSleeping: false,
+            isDead: false,
+            stage: 0,
+            lastTickTime: Date.now()
+          };
+        }
+
+        loadState() {
+          const saved = localStorage.getItem(this.saveKey);
+          if (saved) {
+            try {
+              this.state = JSON.parse(saved);
+              this.catchUpOfflineTime();
+            } catch (e) {
+              this.state = this.getDefaultState();
+            }
+          } else {
+            this.state = this.getDefaultState();
+          }
+        }
+
+        saveState() {
+          this.state.lastTickTime = Date.now();
+          localStorage.setItem(this.saveKey, JSON.stringify(this.state));
+        }
+
+        catchUpOfflineTime() {
+          const now = Date.now();
+          const elapsedSecs = Math.floor((now - this.state.lastTickTime) / 1000);
+          if (elapsedSecs > 0) {
+            const ticks = Math.min(Math.floor(elapsedSecs / 3), 1000);
+            for (let i = 0; i < ticks; i++) {
+              this.tick();
+            }
+          }
+          this.state.lastTickTime = now;
+        }
+
+        bindElements() {
+          this.ui = {
+            petChar: document.getElementById('petChar'),
+            speechBubble: document.getElementById('speechBubble'),
+            poopZone: document.getElementById('poopZone'),
+            stageLabel: document.getElementById('stageLabel'),
+            ageLabel: document.getElementById('ageLabel'),
+            valHunger: document.getElementById('valHunger'),
+            valHappy: document.getElementById('valHappy'),
+            valEnergy: document.getElementById('valEnergy'),
+            valHealth: document.getElementById('valHealth'),
+            sleepOverlay: document.getElementById('sleepOverlay'),
+            viewport: document.getElementById('viewport'),
+            btnReset: document.getElementById('btnReset')
+          };
+        }
+
+        bindEvents() {
+          // 實體按鈕點擊監聽
+          document.querySelectorAll('.game-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const action = btn.getAttribute('data-action');
+              this.handleAction(action);
+            });
+          });
+
+          // 點擊螢幕/角色
+          this.ui.viewport.
+  
